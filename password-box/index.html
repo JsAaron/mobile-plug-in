@@ -9,14 +9,12 @@
 		<meta name="format-detection" content="telphone=no" />
 		<link rel="stylesheet" type="text/css" href="pwBox.css" />
 		<script src="../tool/jQuery.js"></script>
-		<script src="../tool/underscore.js"></script>
-		<script src="../tool/plat.js"></script>
 		<script src="pwBox.js"></script>
 		<script>
 
 			window.onload = function(){
 				pwBox(function(password){
-					alert(password)
+					console.log(password)
 				})
 			}
 
@@ -26,22 +24,20 @@
 
 	<body>
 
-		<button>点击</button>
-
 		<section class="cm-password-box">
 			<ul>
-				<li><span>*</span></li>
-				<li><span>*</span></li>
-				<li><span>*</span></li>
-				<li><span>*</span></li>
-				<li><span>*</span></li>
-				<li><span>*</span></li>
+				<li><span>●</span></li>
+				<li><span>●</span></li>
+				<li><span>●</span></li>
+				<li><span>●</span></li>
+				<li><span>●</span></li>
+				<li><span>●</span></li>
 			</ul>
-		</section>
-
+		</section> 
+ 
 		<section class="cm-modal cm-modal--num-keyboard" style="display:block;">
 			<div class="cm-modal-bd">
-				<div class="cm-keyboard-bar"><span class="btn-secondary">完成</span></div>
+				<!--<div class="cm-keyboard-bar"><span class="btn-secondary">完成</span></div>-->
 				<ul class="cm-keyboard-list">
 					<li class="item-num">1</li>
 					<li class="item-num">2</li>
