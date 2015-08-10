@@ -1,7 +1,7 @@
 /**
  * 密码输入框
  */
-var pwBox = function(fn) {
+function pwBox(fn) {
 
 	var SUPPORT_TOUCH = ('ontouchstart' in window);
 	var START_EV = SUPPORT_TOUCH ? 'touchstart' : 'mousedown';
@@ -45,7 +45,6 @@ var pwBox = function(fn) {
 	}
 
 	function start(event) {
-		console.log(event)
 		if (passwordArr.length > 5) return
 		var textContent = event.target.textContent
 		if (isNumer(textContent)) {
@@ -58,13 +57,6 @@ var pwBox = function(fn) {
 		}
 		if (event.target.className === 'cm-keyboard-list') {
 			delPassWord()
-		}
-	}
-
-	return {
-
-		create: function() {
-
 		}
 	}
 
