@@ -44,9 +44,16 @@ function pwBox(fn) {
 		return /^[0-9]*$/.test(value)
 	}
 
+    var del = ['icon-del-img','item-del'];
+
 	function start(event) {
 		if (passwordArr.length > 5) return
-		var textContent = event.target.textContent
+        var target = event.target;
+        if(~del.indexOf(target.className)){
+            delPassWord()
+            return;
+        }
+		var textContent = target.textContent
 		if (isNumer(textContent)) {
 			textContent = Number(textContent)
 			addPassWord(textContent)
@@ -54,9 +61,6 @@ function pwBox(fn) {
 				fn && fn(passwordArr)
 			}
 			return;
-		}
-		if (event.target.className === 'cm-keyboard-list') {
-			delPassWord()
 		}
 	}
 

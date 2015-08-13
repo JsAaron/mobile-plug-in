@@ -28,7 +28,7 @@ setTimeout(function() {
 
     $(pie1).css({
         'transition-timing-function': 'linear',
-        'transition-duration': '600ms',
+        'transition-duration': '2000ms',
         'transform': 'rotate(180deg)'
     }).on('transitionend', function() {
         $(pie1).off();
@@ -36,11 +36,11 @@ setTimeout(function() {
         $(pie2).css('transform', 'rotate(180deg)')
     
         // setTimeout(function() {
-            $(pie2).css({
-                'transform': 'rotate(360deg)',
-                'transition-timing-function': 'linear',
-                'transition-duration': '600ms'
-            })
+//            $(pie2).css({
+//                'transform': 'rotate(360deg)',
+//                'transition-timing-function': 'linear',
+//                'transition-duration': '600ms'
+//            })
         // }, 0)
 
     })

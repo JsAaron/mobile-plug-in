@@ -8,13 +8,12 @@
 		<meta content="black" name="apple-mobile-web-app-status-bar-style" />
 		<meta name="format-detection" content="telphone=no" />
 		<link rel="stylesheet" type="text/css" href="pwBox.css" />
-		<script src="../tool/jQuery.js"></script>
 		<script src="pwBox.js"></script>
 		<script>
 
 			window.onload = function(){
 				pwBox(function(password){
-					console.log(password)
+					alert('密码是: '+ password)
 				})
 			}
  
@@ -51,9 +50,8 @@
 					<li class="item-num"><span>X</span></li>
 					<li class="item-num">0</li>
 					<li class="item-del">
-						<span class="icon-del">
-							<i class="icon-close"></i>
-						</span>
+                        <span class="icon-del-name">del</span>
+						<span class="icon-del-img"></span>
 					</li>
 				</ul>
 			</div>
