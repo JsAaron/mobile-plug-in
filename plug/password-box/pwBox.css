@@ -4,7 +4,16 @@
 html, body {
     height: 100%;
 }
- 
+
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 /**
  * 1. Set default font family to sans-serif.
  * 2. Prevent iOS text size adjust after orientation change, without disabling
@@ -31,7 +40,6 @@ body {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
 }
-
 
 ul, ol, li, dl, dd {
     margin: 0;
@@ -131,14 +139,26 @@ ul, ol {
     line-height: 54px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    border-bottom: 1px solid #cccccc;
-    border-right: 1px solid #cccccc;
+    /*border-bottom: 1px solid #cccccc;*/
+    /*border-right: 1px solid #cccccc;*/
+    /*pointer-events: none;*/
+
 }
 
-.cm-keyboard-list li:nth-child(1),.cm-keyboard-list li:nth-child(2),.cm-keyboard-list li:nth-child(3){
+.cm-keyboard-list li::before {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-bottom: 1px solid #c8c7cc;
+    -webkit-transform: scaleY(.5);
+    -webkit-transform-origin: 0 0;
+    pointer-events: none;
+}
+
+.cm-keyboard-list li:nth-child(1), .cm-keyboard-list li:nth-child(2), .cm-keyboard-list li:nth-child(3) {
     border-top-style: none;
 }
-
 
 /*最有变的布局方格处理*/
 .cm-keyboard-list li:nth-of-type(3n+3) {
@@ -146,15 +166,13 @@ ul, ol {
     border-right: none;
 }
 
-
 .cm-keyboard-list li:nth-last-child(3) {
     background-color: #C6C6C6;
 }
 
-.cm-keyboard-list li:nth-last-child(3) span ,.cm-keyboard-list .icon-del-name{
+.cm-keyboard-list li:nth-last-child(3) span, .cm-keyboard-list .icon-del-name {
     visibility: hidden;
 }
-
 
 .cm-keyboard-list li:active {
     background-color: #efefef;
@@ -165,14 +183,14 @@ ul, ol {
     background-color: #e2e2e2;
 }
 
-.cm-keyboard-list .item-del{
+.cm-keyboard-list .item-del {
     position: relative;
 }
 
-.cm-keyboard-list .icon-del-img{
+.cm-keyboard-list .icon-del-img {
     width: 30px;
     height: 20px;
-    position:absolute;
+    position: absolute;
     left: 50%;
     top: 50%;
     margin-top: -10px;
@@ -185,9 +203,6 @@ ul, ol {
 .cm-keyboard-list li:last-of-type:active {
     background-color: #fff;
 }
-
-
-
 
 /*密码框*/
 

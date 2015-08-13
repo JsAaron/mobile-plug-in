@@ -17,6 +17,8 @@ function pwBox(fn) {
 	var passwordArr = [];
 	 
     function compatibilityEvent(e) {
+        e.preventDefault();
+        e.stopPropagation();
         var point;
         if (e.touches && e.touches[0]) {
             point = e.touches[0];
