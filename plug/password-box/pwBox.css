@@ -39,12 +39,9 @@ body {
     font-size: 100%;
     line-height: 1.5;
     color: #333;
-<<<<<<< HEAD
     background-image: url("169862742.jpg");
     background-size: 100% 100%;
-=======
     background-color: #7cd3f6;
->>>>>>> 03c16bf4180dbec87d573e4dec0635e64f91fed8
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
 }
@@ -302,12 +299,8 @@ ul, ol {
     position: absolute;
     left:0;
     top: 0;
-<<<<<<< HEAD
     opacity: .7;
     background-color: #000000;
-=======
-    opacity: .8;
->>>>>>> 03c16bf4180dbec87d573e4dec0635e64f91fed8
 }
 
 
