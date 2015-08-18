@@ -32,11 +32,11 @@ setTimeout(function() {
         'transition-duration': '5000ms',
         'transform': 'rotate(180deg)'
     }).on('webkitTransitionEnd', function() {
-     
+
         $(pie1).off();
         $(pie2).css("backgroundColor", "#d13c36");
         $(pie2).css('transform', 'rotate(180deg)')
-     
+ 
         setTimeout(function() {
            $(pie2).css({
                'transform': 'rotate(360deg)',
