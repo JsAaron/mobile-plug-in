@@ -253,7 +253,7 @@ ul, ol {
     background-color: #fff;
 }
 
-/*密码框*/
+/*密码框1*/
 
 .cm-password-box {
     width: 90%;
@@ -290,6 +290,47 @@ ul, ol {
 .cm-password-box ul li span {
     display: none;
 }
+
+
+/*密码框2*/
+
+.cm-password-box-check {
+    width: 90%;
+    height: 48px;
+    position: absolute;
+    top: 35%;
+    left: 5%;
+    background-color: #fff;
+    border: 1px solid #e1e1e8;
+    border-radius: 3px;
+}
+
+.cm-password-box-check ul li {
+    width: 16.5%;
+    float: left;
+    font-size: 1.6rem;
+    font-weight: normal;
+    text-align: center;
+    height: 48px;
+    line-height: 48px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: #dbdbdb;
+    overflow: hidden;
+}
+
+.cm-password-box-check ul li:nth-last-of-type(1) {
+    width: 17.5%;
+    border-right-style: none;
+}
+
+.cm-password-box-check ul li span {
+    display: none;
+}
+
+
 
 
 

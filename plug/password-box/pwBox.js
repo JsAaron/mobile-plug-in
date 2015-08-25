@@ -1,21 +1,26 @@
 /**
  * 密码输入框
+ * @param  {[type]} keyboardContainer [键盘节点]
+ * @param  {[type]} passWord1 [密码框节点1]
+ * @param  {[type]} passWord2 [密码框节点2]
+ * @return {[type]}            [description]
  */
-function pwBox(fn) {
+function pwBox(keyboardContainer, passWord1, passWord2) {
 
     var SUPPORT_TOUCH = ('ontouchstart' in window);
     var START_EV = SUPPORT_TOUCH ? 'touchstart' : 'mousedown';
     var END_EV = SUPPORT_TOUCH ? 'touchend' : 'mouseup';
 
-    //密码输入框
-    var keyboard = document.querySelector('.cm-modal-bd')
-    //密码显示框
-    var pwBox = document.querySelector('.cm-password-box');
-    //密码框的li框
-    var pwBox_li = pwBox.querySelectorAll("li");
+    var passWordChild_1 = passWord1.querySelectorAll("li");
+    var passWordChild_2 = passWord2 && passWord2.querySelectorAll("li");
 
-    //密码
+    var callback = {
+        check   : null,
+        success : null
+    }
     var passwordArr = [];
+    var passWordCheck = [];
+    var startCheck = false;
 
     function compatibilityEvent(e) {
         e.preventDefault();
@@ -29,21 +34,34 @@ function pwBox(fn) {
         return point
     }
 
-    keyboard.addEventListener(START_EV, function (e) {
+    keyboardContainer.addEventListener(START_EV, function(e) {
         start(compatibilityEvent(e))
     }, false);
-    keyboard.addEventListener(END_EV, function (e) {
+    keyboardContainer.addEventListener(END_EV, function(e) {
         end(compatibilityEvent(e))
     }, false);
 
+
+    function switchArgs(fn){
+        if(!startCheck){
+            fn(passwordArr,passWordChild_1)
+        }else{
+            fn(passWordCheck,passWordChild_2)
+        }
+    }
+
     function addPassWord(value) {
-        passwordArr.push(value)
-        pwBox_li[passwordArr.length - 1].children[0].style.display = "block"
+        switchArgs(function(arr,elem) {
+            arr.push(value);
+            elem[arr.length - 1].children[0].style.display = "block";
+        })
     }
 
     function delPassWord() {
-        passwordArr.pop();
-        pwBox_li[passwordArr.length].children[0].style.display = "none"
+        switchArgs (function(arr, elem) {
+            arr.pop();
+            elem[arr.length].children[0].style.display = "none";
+        })
     }
 
     function isNumer(value) {
@@ -54,7 +72,13 @@ function pwBox(fn) {
 
     function action(event, numberback, delback) {
         var target = event.target;
-        if (passwordArr.length > 5) return
+        //密码上下文
+        var passwordContent = passwordArr;
+        if (startCheck) { //启动检测
+            passwordContent = passWordCheck; //是否换行
+        } else {
+            if (passwordContent.length > 5) return
+        }
         if (~delName.indexOf(target.className)) {
             delback && delback(target)
             return;
@@ -63,20 +87,32 @@ function pwBox(fn) {
         if (isNumer(textContent)) {
             textContent = Number(textContent)
             numberback && numberback(target, textContent);
-            if (passwordArr.length === 6) {
-                if (fn) {
-                    fn(passwordArr, function () {
-                    }, function () {
-                        passwordArr = [];
-                        for (var i = 0; i < pwBox_li.length; i++) {
-                            pwBox_li[i].children[0].style.display = "none"
-                        }
-                    })
+            if (passwordContent.length === passWordChild_1.length) {
+                //第一验证
+                if(!startCheck && !passWordChild_2){
+                    callback.success && callback.success(passwordArr)
+                    return
                 }
+                //如果有检测框，继续
+                if (!startCheck && passWordChild_2) { 
+                    startCheck = true;
+                    callback.check && callback.check(true);
+                }
+                //验证密码
+                if (passWordCheck && passWordChild_2 && passWordCheck.length === passWordChild_2.length) {
+                    if (passwordArr.toString() == passWordCheck.toString()) {
+                        callback.success && callback.success(passwordArr)
+                    } else {
+                        callback.check && callback.check(false, true);
+                    }
+                }
+
+
             }
             return;
         }
     }
+
 
     function setColor(element, color) {
         element.style.backgroundColor = color;
@@ -90,25 +126,49 @@ function pwBox(fn) {
     }
 
     function start(event) {
-        action(event, function (elem, number) {
+        action(event, function(elem, number) {
             setColor(elem, '#efefef')
-        }, function (elem) {
+        }, function(elem) {
             setColor(filter(elem), '#fff')
         })
     }
 
     function end(event) {
-        action(event, function (elem, number) {
+        action(event, function(elem, number) {
             setColor(elem, '#fff')
             addPassWord(number)
-        }, function (elem) {
+        }, function(elem) {
             setColor(filter(elem), '#e2e2e2')
             delPassWord()
         })
     }
 
 
+    function reset() {
+        passwordArr = [];
+        passWordCheck = []
+        clear(passWordChild_1)
+        clear(passWordChild_2)
+        startCheck = false;
+    }
+
+    function clear(li){
+        for (var i = 0; i < li.length; i++) {
+            li[i].children[0].style.display = "none"
+        }
+    }
+
+    return {
+        monitor: function(args) {
+            if (args.check) {
+                callback.check = args.check
+            }
+            if (args.success) {
+                callback.success = args.success;
+            }
+        },
+        reset:function(){
+            reset();
+        }
+    }
 }
-
-
-
