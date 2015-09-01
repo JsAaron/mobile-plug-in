@@ -15,18 +15,20 @@ function pwBox(keyboardContainer, passWord1, passWord2) {
 	var passWordChild_2 = passWord2 && passWord2.querySelectorAll("li");
 
 	var itemDel = keyboardContainer.querySelector('.item-del');
-
-	var isClick = false;
-
+	
 	var callback = {
 		check   : null,
 		success : null
 	};
+	
 	var passwordArr = [];
 	var passWordCheck = [];
 	var startCheck = false;
 
-	function compatibilityEvent(e) {
+	function touchfix(e,fn){
+		if(e.touches && e.touches.length >1){
+			return ;
+		}
 		e.preventDefault();
 		e.stopPropagation();
 		var point;
@@ -35,14 +37,18 @@ function pwBox(keyboardContainer, passWord1, passWord2) {
 		} else {
 			point = e;
 		}
-		return point
+		fn(point);
 	}
-
+	
 	keyboardContainer.addEventListener(START_EV, function(e) {
-		start(compatibilityEvent(e))
+		touchfix(e,function(event){
+			start(event);	
+		})
 	}, false);
 	keyboardContainer.addEventListener(END_EV, function(e) {
-		end(compatibilityEvent(e))
+		touchfix(e,function(event){
+			end(event)
+		})
 	}, false);
 
 
@@ -75,19 +81,19 @@ function pwBox(keyboardContainer, passWord1, passWord2) {
 
 	var delName = ['icon-del-img', 'item-del'];
 
-
 	function action(event, numberback, delback) {
 		var target = event.target;
+		//删除键
+		if (~delName.indexOf(target.className)) {
+			delback && delback(target);
+			return;
+		}
 		//密码上下文
 		var passwordContent = passwordArr;
 		if (startCheck) { //启动检测
 			passwordContent = passWordCheck; //是否换行
 		} else {
 			if (passwordContent.length > 5) return
-		}
-		if (~delName.indexOf(target.className)) {
-			delback && delback(target);
-			return;
 		}
 		var textContent = target.textContent
 		if (isNumer(textContent)) {
@@ -116,7 +122,6 @@ function pwBox(keyboardContainer, passWord1, passWord2) {
 			return;
 		}
 	}
-
 
 	function setColor(element, color) {
 		element.style.backgroundColor = color;
@@ -163,7 +168,6 @@ function pwBox(keyboardContainer, passWord1, passWord2) {
 		}, function(elem) {
 			resetElement(delElement,'#e2e2e2');
 			delPassWord();
-			//console.log(2)
 		})
 	}
 
