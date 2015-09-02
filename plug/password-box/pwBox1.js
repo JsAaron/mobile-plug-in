@@ -25,21 +25,55 @@ function pwBox(keyboardContainer, passWord1, passWord2) {
 	var passWordCheck = [];
 	var startCheck = false;
 
+
 	function touchfix(e,fn){
 		e.preventDefault();
 		e.stopPropagation();
-		fn(e);
+		var point;
+		if (e.touches && e.touches[0]) {
+			point = e.touches[0];
+		} else {
+			point = e;
+		}
+		fn(point);
 	}
 	
+	var clicking = false;
+
 	keyboardContainer.addEventListener(START_EV, function(e) {
-		touchfix(e,function(event){
-			start(event);	
-		})
+		console.log('\n')
+		console.log('start的手指数量: '+ e.touches.length)
+		if(e.touches){
+			for (var i = 0; i < e.touches.length; i++) {
+				console.log('start touches对象的textContent值 :' + e.touches[i].target.textContent)
+			}
+		}
+		console.log('当前start手指对应的textContent值: '+ e.target.textContent)
+		
+		// touchfix(e, function(event) {
+		// 	start(event);
+		// })
 	}, false);
 	keyboardContainer.addEventListener(END_EV, function(e) {
-		touchfix(e,function(event){
-			end(event)
-		})
+		console.log('\n')
+		console.log('end的手指数量: '+ e.touches.length)
+		if(e.touches){
+			for (var i = 0; i < e.touches.length; i++) {
+				console.log('end touches对象的textContent值 :' + e.touches[i].target.textContent)
+			}
+		}
+		console.log('当前end手指对应的textContent值: '+ e.target.textContent)
+		// touchfix(e, function(event) {
+		// 	end(event)
+		// })
+	}, false);
+
+
+	keyboardContainer.addEventListener('touchcancel', function(e) {
+		console.log('touchcancel: ')
+		// touchfix(e, function(event) {
+		// 	end(event)
+		// })
 	}, false);
 
 
@@ -53,9 +87,13 @@ function pwBox(keyboardContainer, passWord1, passWord2) {
 
 	function addPassWord(value) {
 		switchArgs(function(arr,elem) {
-			arr.push(value);
-			elem[arr.length - 1].children[0].style.display = "block";
-			elem[arr.length - 1].children[0].className = "circle";
+			try{
+				arr.push(value);
+				elem[arr.length - 1].children[0].style.display = "block";
+				elem[arr.length - 1].children[0].className = "circle";
+			}catch(er){
+
+			}
 		})
 	}
 
