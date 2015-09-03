@@ -21,54 +21,64 @@ var lr = require('tiny-lr'),
 var browserSync = require('browser-sync').create();
 var reload      = browserSync.reload;
 
+var browserify = require('browserify');
+var b = browserify();
+
+
+var src  = "./develop";
+var dest = "./release";
 var config = {
     localserver: {
         host: 'localhost',
         port: '8888'
     },
-    //路径
-    develop_css  : 'develop/sass/*.scss',
-    develop_js   : 'develop/js',
-    release_html : 'develop/*.html',
-    release_css  : 'release',
-    release_js   : 'release'
+    sass: {
+        src: src + "/sass/*.{sass,scss}",
+        dest: dest
+    },
+    browserify:{
+
+    },
+    html: {
+        dest: dest + "/*.html"
+    }
 }
+
 
 //SASS编译
 gulp.task('sass', function() {
-    gulp.src(config.develop_css)
+    gulp.src(config.sass.src)
         .pipe(sass())
         .pipe(plumber())
         .pipe(rename("pwBox.css"))
-        .pipe(gulp.dest('release'))
+        .pipe(gulp.dest(config.sass.dest))
         .pipe(reload({stream: true}));
 });
 
-gulp.task('script',function(){
-    console.log(2222222222)
+//CommonJs
+gulp.task('browserify',function(){
+
 });
 
 // web服务 Server + watching scss/html files
 gulp.task('serve', ['sass'], function() {
     browserSync.init({
-        server: "./release"
+        server: dest
     });
-    gulp.watch(config.develop_css, ['sass']);
+    gulp.watch(config.sass.src, ['sass']);
     gulp.watch(config.develop_js, ['script']);
-    gulp.watch(config.release_html).on('change', reload);
+    gulp.watch(config.html.dest).on('change', reload);
 });
 
+gulp.task('setWatch', function() {
+    global.isWatching = true;
+});
 
-
-//默认任务
-gulp.task('default', function() {
-    // gulp.run('sass');
+gulp.task('watch', ['setWatch', 'browserify'], function() {
     gulp.run('serve');
-    // gulp.run('webserver');
-    // gulp.run('openbrowser');
 });
 
-
+gulp.task('default', ['watch'])
 
 // ===========================================================
 // 

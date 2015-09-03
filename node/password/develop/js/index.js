@@ -1,1 +1,3 @@
-alert(1)
+var config = require('./config.js');
+
+config.a()
