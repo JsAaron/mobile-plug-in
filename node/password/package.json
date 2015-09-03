@@ -25,6 +25,8 @@
     "gulp-zip": "^2.0.3",
     "imagemin-pngquant": "^4.0.0",
     "opn": "^1.0.1",
-    "tiny-lr": "^0.1.5"
+    "tiny-lr": "^0.1.5",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.3.1"
   }
 }

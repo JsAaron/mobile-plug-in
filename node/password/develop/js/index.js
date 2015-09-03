@@ -1,3 +1,3 @@
 var config = require('./config.js');
 
-config.a()
+console.log( config.name )

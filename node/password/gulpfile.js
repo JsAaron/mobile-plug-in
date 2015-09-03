@@ -1,31 +1,32 @@
 var lr = require('tiny-lr'),
-     server     = lr(),
-     gulp       = require('gulp'),
-     sass       = require('gulp-sass'),
-     // livereload = require('gulp-livereload'),
-     uglify     = require('gulp-uglify'), //js压缩
-     minifycss  = require('gulp-minify-css'), //css压缩
-     plumber    = require('gulp-plumber'), //阻止 gulp 插件发生错误导致进程退出并输出错误日志
-     // webserver  = require('gulp-webserver'),
-     opn        = require('opn'),
-     concat     = require('gulp-concat'),//合并文件
-     clean      = require('gulp-clean'), //清空文件夹
-     imagemin   = require('gulp-imagemin'),
-     pngquant   = require('imagemin-pngquant'),
-     rename     = require("gulp-rename"),
-     zip        = require('gulp-zip'),
-     copy       = require("gulp-copy"),
-     connect    = require('gulp-connect');
+    server = lr(),
+    gulp = require('gulp'),
+    sass = require('gulp-sass'),
+    // livereload = require('gulp-livereload'),
+    uglify = require('gulp-uglify'), //js压缩
+    minifycss = require('gulp-minify-css'), //css压缩
+    plumber = require('gulp-plumber'), //阻止 gulp 插件发生错误导致进程退出并输出错误日志
+    // webserver  = require('gulp-webserver'),
+    opn = require('opn'),
+    concat = require('gulp-concat'), //合并文件
+    clean = require('gulp-clean'), //清空文件夹
+    imagemin = require('gulp-imagemin'),
+    pngquant = require('imagemin-pngquant'),
+    rename = require("gulp-rename"),
+    zip = require('gulp-zip'),
+    copy = require("gulp-copy"),
+    connect = require('gulp-connect');
 
 //http://www.browsersync.cn/docs/recipes/
 var browserSync = require('browser-sync').create();
-var reload      = browserSync.reload;
+var reload = browserSync.reload;
 
+//CommonJs
 var browserify = require('browserify');
-var b = browserify();
+var watchify   = require('watchify');
+var  source    = require('vinyl-source-stream');
 
-
-var src  = "./develop";
+var src = "./develop";
 var dest = "./release";
 var config = {
     localserver: {
@@ -36,8 +37,13 @@ var config = {
         src: src + "/sass/*.{sass,scss}",
         dest: dest
     },
-    browserify:{
-
+    browserify: {
+        debug: true,
+        bundleConfigs: [{
+            entries: src + '/js/index.js',
+            dest: dest,
+            outputName: 'pwBox.js'
+        }]
     },
     html: {
         dest: dest + "/*.html"
@@ -52,12 +58,80 @@ gulp.task('sass', function() {
         .pipe(plumber())
         .pipe(rename("pwBox.css"))
         .pipe(gulp.dest(config.sass.dest))
-        .pipe(reload({stream: true}));
+        .pipe(reload({
+            stream: true
+        }));
 });
 
 //CommonJs
-gulp.task('browserify',function(){
+gulp.task('browserify', function(bundleConfig) {
 
+    var bundleQueue = config.browserify.bundleConfigs.length;
+
+    function browserifyThis() {
+
+        var bundler = browserify({
+            // Required watchify args
+            cache: {},
+            packageCache: {},
+            fullPaths: true,
+            // Specify the entry point of your app
+            entries: bundleConfig.entries,
+            // Add file extentions to make optional in your requires
+            extensions: config.browserify.extensions,
+            // Enable source maps!
+            debug: config.browserify.debug
+        });
+
+        var bundle = function() {
+            // Log when bundling starts
+            // bundleLogger.start(bundleConfig.outputName);
+
+            return bundler
+                .bundle()
+                // Report compile errors
+                .on('error', function(){
+
+                })
+                // Use vinyl-source-stream to make the
+                // stream gulp compatible. Specifiy the
+                // desired output filename here.
+                .pipe(source(bundleConfig.outputName))
+                // Specify the output destination
+                .pipe(gulp.dest(bundleConfig.dest))
+                .on('end', reportFinished);
+        };
+
+        if (global.isWatching) {
+            // Wrap with watchify and rebundle on changes
+            bundler = watchify(bundler);
+            // Rebundle on update
+            bundler.on('update', bundle);
+        }
+
+        var bytes;
+        bundler.on('bytes', function(b) {
+            bytes = b
+        });
+
+        var reportFinished = function() {
+            // Log when bundling completes
+            // bundleLogger.end(bundleConfig.outputName, bytes)
+
+            if (bundleQueue) {
+                bundleQueue--;
+                if (bundleQueue === 0) {
+                    // If queue is empty, tell gulp the task is complete.
+                    // https://github.com/gulpjs/gulp/blob/master/docs/API.md#accept-a-callback
+                    callback();
+                }
+            }
+        };
+
+        return bundle();
+    }
+
+    config.browserify.bundleConfigs.forEach(browserifyThis);
 });
 
 // web服务 Server + watching scss/html files
@@ -95,7 +169,7 @@ gulp.task('webserver', function() {
                 host: config.localserver.host,
                 port: config.localserver.port,
                 livereload: true,
-                open:true, //开打浏览器
+                open: true, //开打浏览器
                 directoryListing: false //显示目录
             })
         );
@@ -134,7 +208,9 @@ gulp.task('openbrowser', function() {
 
 //多余文件删除
 gulp.task('clean', function() {
-    return gulp.src(['build/temp_js/*','build/temp_css/*'],{read:false})
+    return gulp.src(['build/temp_js/*', 'build/temp_css/*'], {
+            read: false
+        })
         .pipe(clean({
             force: true
         }))
@@ -162,4 +238,3 @@ gulp.task('build2', function() {
     gulp.run('rename');
     //gulp.run('clean');
 });
-
