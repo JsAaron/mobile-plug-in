@@ -2,11 +2,11 @@ var lr = require('tiny-lr'),
      server     = lr(),
      gulp       = require('gulp'),
      sass       = require('gulp-sass'),
-     livereload = require('gulp-livereload'),
+     // livereload = require('gulp-livereload'),
      uglify     = require('gulp-uglify'), //js压缩
      minifycss  = require('gulp-minify-css'), //css压缩
      plumber    = require('gulp-plumber'), //阻止 gulp 插件发生错误导致进程退出并输出错误日志
-     webserver  = require('gulp-webserver'),
+     // webserver  = require('gulp-webserver'),
      opn        = require('opn'),
      concat     = require('gulp-concat'),//合并文件
      clean      = require('gulp-clean'), //清空文件夹
@@ -17,13 +17,79 @@ var lr = require('tiny-lr'),
      copy       = require("gulp-copy"),
      connect    = require('gulp-connect');
 
-var config = {
-    localserver:{
-        host:'localhost',
-        port:'8888'
-    }
+//http://www.browsersync.cn/docs/recipes/
+var browserSync = require('browser-sync').create();
+var reload      = browserSync.reload;
 
+var config = {
+    localserver: {
+        host: 'localhost',
+        port: '8888'
+    },
+    //路径
+    develop_css  : 'develop/sass/*.scss',
+    develop_js   : 'develop/js',
+    release_html : 'develop/*.html',
+    release_css  : 'release',
+    release_js   : 'release'
 }
+
+//SASS编译
+gulp.task('sass', function() {
+    gulp.src(config.develop_css)
+        .pipe(sass())
+        .pipe(plumber())
+        .pipe(rename("pwBox.css"))
+        .pipe(gulp.dest('release'))
+        .pipe(reload({stream: true}));
+});
+
+gulp.task('script',function(){
+    console.log(2222222222)
+});
+
+// web服务 Server + watching scss/html files
+gulp.task('serve', ['sass'], function() {
+    browserSync.init({
+        server: "./release"
+    });
+    gulp.watch(config.develop_css, ['sass']);
+    gulp.watch(config.develop_js, ['script']);
+    gulp.watch(config.release_html).on('change', reload);
+});
+
+
+
+//默认任务
+gulp.task('default', function() {
+    // gulp.run('sass');
+    gulp.run('serve');
+    // gulp.run('webserver');
+    // gulp.run('openbrowser');
+});
+
+
+
+// ===========================================================
+// 
+// 
+// 
+// ==========================================================
+
+
+//开启本地 Web 服务器功能
+gulp.task('webserver', function() {
+    gulp.src('release')
+        .pipe(
+            webserver({
+                host: config.localserver.host,
+                port: config.localserver.port,
+                livereload: true,
+                open:true, //开打浏览器
+                directoryListing: false //显示目录
+            })
+        );
+});
 
 //压缩JS
 gulp.task('minifyjs', function() {
@@ -47,19 +113,7 @@ gulp.task('rename', function() {
         .pipe(gulp.dest("./build"));
 });
 
-//开启本地 Web 服务器功能
-gulp.task('webserver', function() {
-    gulp.src('./')
-        .pipe(
-            webserver({
-                host: config.localserver.host,
-                port: config.localserver.port,
-                livereload: true,
-                open:false, //开打浏览器
-                directoryListing: false //显示目录
-            })
-        );
-});
+
 
 //通过浏览器打开本地 Web服务器 路径
 gulp.task('openbrowser', function() {
@@ -67,49 +121,6 @@ gulp.task('openbrowser', function() {
 });
 
 
-//SASS编译
-gulp.task('sass', function() {
-    gulp.src('develop/sass/*.scss')
-        .pipe(sass())
-        .pipe(plumber())
-        .pipe(rename("pwBox.css"))
-        .pipe(gulp.dest('release'))
-});
-
-// 监听任务 运行语句 gulp watch
-gulp.task('watch', function() {
-    // 监听css
-    gulp.watch('develop/sass/*.scss', function(){
-        gulp.run('sass');
-    });
-
-
-    // gulp.watch('./sass/*.scss', function(e) {
-    //     gulp.run('sass');
-    //     server.changed({
-    //         body: {
-    //             files: [e.path]
-    //         }
-    //     });
-    // });
-
-    // gulp.watch(['./sass/*.scss', './*.html', './*.php', './*.css', './js/*.js'], function(e) {
-    //     server.changed({
-    //         body: {
-    //             files: [e.path]
-    //         }
-    //     });
-    // });
-
-});
-
-//默认任务
-gulp.task('default', function() {
-    // gulp.run('sass');
-    gulp.run('watch');
-    // gulp.run('webserver');
-    // gulp.run('openbrowser');
-});
 
 //多余文件删除
 gulp.task('clean', function() {
