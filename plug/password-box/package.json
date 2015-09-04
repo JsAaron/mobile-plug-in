@@ -1,0 +1,9 @@
+{
+  "name": "password-box",
+  "version": "0.1.0",
+  "description": "test",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+     "browser-sync": "^2.8.2"
+  }
+}
