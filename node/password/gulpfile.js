@@ -218,12 +218,10 @@ gulp.task('rename', function() {
 });
 
 
-
 //通过浏览器打开本地 Web服务器 路径
 gulp.task('openbrowser', function() {
     opn('http://' + config.localserver.host + ':' + config.localserver.port);
 });
-
 
 
 //多余文件删除
@@ -237,24 +235,3 @@ gulp.task('clean', function() {
 });
 
 
-//项目完成提交任务
-gulp.task('build', function() {
-    gulp.run('imagemin');
-    gulp.run('sass');
-    gulp.run('minifyjs');
-    gulp.run('alljs');
-    gulp.run('buildfiles');
-    gulp.run('rename');
-    //gulp.run('clean');
-});
-
-//项目完成提交任务
-gulp.task('build2', function() {
-    gulp.run('tinypng');
-    gulp.run('sass');
-    gulp.run('minifyjs');
-    gulp.run('alljs');
-    gulp.run('buildfiles');
-    gulp.run('rename');
-    //gulp.run('clean');
-});
