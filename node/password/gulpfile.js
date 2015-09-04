@@ -15,8 +15,8 @@ var lr = require('tiny-lr'),
     rename = require("gulp-rename"),
     zip = require('gulp-zip'),
     copy = require("gulp-copy"),
-    connect = require('gulp-connect') //合并
-notify = require('gulp-notify'); //提示
+    connect = require('gulp-connect'), //合并
+    notify = require('gulp-notify'); //提示
 
 //http://www.browsersync.cn/docs/recipes/
 var browserSync = require('browser-sync').create();
@@ -32,27 +32,6 @@ var source = require('vinyl-source-stream');
 //webpack
 var webpack = require('webpack');
 var gulpWebpack = require('gulp-webpack');
-var webpackConfig = require('./webpack.config');
-
-
-//=====================================
-//  webpack打包
-//=====================================
-gulp.task("webpack", function(callback) {
-    var myConfig = Object.create(webpackConfig);
-    // run webpack
-    webpack(
-        // configuration
-        myConfig,
-        function(err, stats) {
-            // if(err) throw new gutil.PluginError("webpack", err);
-            // gutil.log("[webpack]", stats.toString({
-            //   // output options
-            // }));
-            callback();
-        });
-});
-
 
 //===================================
 //  配置文件
@@ -69,14 +48,15 @@ var config = {
         dest: dest
     },
     script: {
-        allsrc: src + '/lib/*.js',
-        src: src + '/lib/index.js',
-        dest: dest
+        allsrc : src + '/lib/*.js',
+        src    : src + '/lib/app.js',
+        dest   : dest,
+        name   :'pwBox.js'
     },
     browserify: {
         debug: true,
         bundleConfigs: [{
-            entries: src + '/lib/index.js',
+            entries: src + '/lib/app.js',
             dest: dest,
             outputName: 'pwBox.js'
         }]
@@ -87,12 +67,46 @@ var config = {
 }
 
 
+//=====================================
+//  webpack打包
+//=====================================
+var webpackConfig = require('./webpack.config')(config);
+
+gulp.task("webpack", function(callback) {
+    var myConfig = Object.create(webpackConfig);
+    webpack(
+        myConfig,
+        function(err, stats) {
+            callback();
+        });
+});
+
+gulp.task("gulpWebpack", function(callback) {
+    return gulp.src(config.script.src)
+        .pipe(gulpWebpack({
+            entry: {
+                app:config.script.src
+            },
+            output: {
+                filename: config.script.name,
+            },
+        }))
+        .on('error', handleErrors)
+        .pipe(gulp.dest(config.script.dest))
+        .pipe(reload({
+            stream: true
+        }));
+});
+
+
+
 //===================================
 //  sass预编译
 //===================================
 gulp.task('sass', function() {
-    gulp.src(config.sass.src)
+    return gulp.src(config.sass.src)
         .pipe(sass())
+        .on('error', handleErrors)
         .pipe(plumber())
         .pipe(rename("pwBox.css"))
         .pipe(gulp.dest(config.sass.dest))
@@ -246,12 +260,12 @@ gulp.task('scripts', function() {
 //===================================
 
 // web服务 Server + watching scss/html files
-gulp.task('web-server', ['sass', 'scripts'], function() {
+gulp.task('web-server', ['sass', 'gulpWebpack'], function() {
     browserSync.init({
         server: dest
     });
     gulp.watch(config.sass.src, ['sass']);
-    gulp.watch(config.script.allsrc, ['scripts']);
+    gulp.watch(config.script.allsrc, ['gulpWebpack']);
     gulp.watch(config.html.dest).on('change', reload);
 });
 
