@@ -22,9 +22,10 @@ var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 
 //CommonJs
-var browserify = require('browserify');
-var watchify   = require('watchify');
-var  source    = require('vinyl-source-stream');
+var browserify     = require('browserify');
+var gulpBrowserify = require('gulp-browserify')
+var watchify       = require('watchify');
+var  source        = require('vinyl-source-stream');
 
 var src = "./develop";
 var dest = "./release";
@@ -36,6 +37,10 @@ var config = {
     sass: {
         src: src + "/sass/*.{sass,scss}",
         dest: dest
+    },
+    script:{
+        src  :src + '/js/index.js',
+        dest :dest
     },
     browserify: {
         debug: true,
@@ -63,7 +68,7 @@ gulp.task('sass', function() {
         }));
 });
 
-//CommonJs
+//CommonJs 1
 gulp.task('browserify', function(bundleConfig) {
 
     var bundleQueue = config.browserify.bundleConfigs.length;
@@ -134,13 +139,28 @@ gulp.task('browserify', function(bundleConfig) {
     config.browserify.bundleConfigs.forEach(browserifyThis);
 });
 
+
+//CommonJs 2 
+gulp.task('scripts', function() {
+    gulp.src(config.script.src)
+        .pipe(gulpBrowserify({
+          insertGlobals : true,
+          debug : !gulp.env.production
+        }))
+        .pipe(rename('pwBox.js'))
+        .pipe(gulp.dest(config.script.dest))
+        .pipe(reload({
+            stream: true
+        }));
+});
+
 // web服务 Server + watching scss/html files
 gulp.task('serve', ['sass'], function() {
     browserSync.init({
         server: dest
     });
     gulp.watch(config.sass.src, ['sass']);
-    gulp.watch(config.develop_js, ['script']);
+    gulp.watch(config.script.src, ['scripts']);
     gulp.watch(config.html.dest).on('change', reload);
 });
 
@@ -148,7 +168,7 @@ gulp.task('setWatch', function() {
     global.isWatching = true;
 });
 
-gulp.task('watch', ['setWatch', 'browserify'], function() {
+gulp.task('watch', ['setWatch', 'scripts'], function() {
     gulp.run('serve');
 });
 
