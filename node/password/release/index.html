@@ -9,16 +9,17 @@
     <meta name="format-detection" content="telphone=no" />
     <link rel="stylesheet" type="text/css" href="pwBox.css" />
     <script src="pwBox.js"></script>
-    <script>
-    window.onload = function() {
-
-
-    }
-    </script>
     <title>数字键盘</title>
 </head>
 
 <body>
+
+    <div id="demo">
+      {{message}}
+      <input v-model="message">
+    </div>
+
+
     <div class="cm-opacity"></div>
     <div class="cm-password-content">
         <div class="cm-ico">
