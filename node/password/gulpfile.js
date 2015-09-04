@@ -1,22 +1,22 @@
 var lr = require('tiny-lr'),
-    server        = lr(),
-    gulp          = require('gulp'),
-    sass          = require('gulp-sass'),
+    server = lr(),
+    gulp = require('gulp'),
+    sass = require('gulp-sass'),
     // livereload = require('gulp-livereload'),
-    uglify        = require('gulp-uglify'), //js压缩
-    minifycss     = require('gulp-minify-css'), //css压缩
-    plumber       = require('gulp-plumber'), //阻止 gulp 插件发生错误导致进程退出并输出错误日志
+    uglify = require('gulp-uglify'), //js压缩
+    minifycss = require('gulp-minify-css'), //css压缩
+    plumber = require('gulp-plumber'), //阻止 gulp 插件发生错误导致进程退出并输出错误日志
     // webserver  = require('gulp-webserver'),
-    opn           = require('opn'),
-    concat        = require('gulp-concat'), //合并文件
-    clean         = require('gulp-clean'), //清空文件夹
+    opn = require('opn'),
+    concat = require('gulp-concat'), //合并文件
+    clean = require('gulp-clean'), //清空文件夹
     // imagemin   = require('gulp-imagemin'),
     // pngquant   = require('imagemin-pngquant'),
-    rename        = require("gulp-rename"),
-    zip           = require('gulp-zip'),   
-    copy          = require("gulp-copy"),
-    connect       = require('gulp-connect') //合并
-    notify        = require('gulp-notify'); //提示
+    rename = require("gulp-rename"),
+    zip = require('gulp-zip'),
+    copy = require("gulp-copy"),
+    connect = require('gulp-connect') //合并
+notify = require('gulp-notify'); //提示
 
 //http://www.browsersync.cn/docs/recipes/
 var browserSync = require('browser-sync').create();
@@ -25,10 +25,38 @@ var reload = browserSync.reload;
 //CommonJs
 var gulpBrowserify = require('gulp-browserify');
 
-var browserify     = require('browserify');
-var watchify       = require('watchify');
-var  source        = require('vinyl-source-stream');
+var browserify = require('browserify');
+var watchify = require('watchify');
+var source = require('vinyl-source-stream');
 
+//webpack
+var webpack = require('webpack');
+var gulpWebpack = require('gulp-webpack');
+var webpackConfig = require('./webpack.config');
+
+
+//=====================================
+//  webpack打包
+//=====================================
+gulp.task("webpack", function(callback) {
+    var myConfig = Object.create(webpackConfig);
+    // run webpack
+    webpack(
+        // configuration
+        myConfig,
+        function(err, stats) {
+            // if(err) throw new gutil.PluginError("webpack", err);
+            // gutil.log("[webpack]", stats.toString({
+            //   // output options
+            // }));
+            callback();
+        });
+});
+
+
+//===================================
+//  配置文件
+//===================================
 var src = "./develop";
 var dest = "./release";
 var config = {
@@ -40,10 +68,10 @@ var config = {
         src: src + "/sass/*.{sass,scss}",
         dest: dest
     },
-    script:{
-        allsrc : src + '/lib/*.js',
-        src    : src + '/lib/index.js',
-        dest   : dest
+    script: {
+        allsrc: src + '/lib/*.js',
+        src: src + '/lib/index.js',
+        dest: dest
     },
     browserify: {
         debug: true,
@@ -59,7 +87,9 @@ var config = {
 }
 
 
-//SASS编译
+//===================================
+//  sass预编译
+//===================================
 gulp.task('sass', function() {
     gulp.src(config.sass.src)
         .pipe(sass())
@@ -72,6 +102,18 @@ gulp.task('sass', function() {
 });
 
 
+//===================================
+//  清理文件
+//===================================
+gulp.task('clean', function() {
+    return gulp.src(['*'], {
+            read: false
+        })
+        .pipe(clean({
+            force: true
+        }))
+});
+
 
 //===================================
 //  CommonJs 打包
@@ -79,7 +121,7 @@ gulp.task('sass', function() {
 
 // 打印日志
 var startTime;
-var gutil        = require('gulp-util');
+var gutil = require('gulp-util');
 var prettyHrtime = require('pretty-hrtime');
 var bundleLogger = {
     start: function(filepath) {
@@ -186,7 +228,7 @@ gulp.task('scripts', function() {
         //   debug : !gulp.env.production
         // }))
         .pipe(gulpBrowserify())
-        .on('error',function(error){
+        .on('error', function(error) {
             console.log(String(error));
             this.end();
         })
@@ -198,13 +240,18 @@ gulp.task('scripts', function() {
         }));
 });
 
+
+//===================================
+//  web服务
+//===================================
+
 // web服务 Server + watching scss/html files
-gulp.task('web-server', ['sass','scripts'], function() {
+gulp.task('web-server', ['sass', 'scripts'], function() {
     browserSync.init({
         server: dest
     });
     gulp.watch(config.sass.src, ['sass']);
-    gulp.watch(config.script.allsrc,['scripts']);
+    gulp.watch(config.script.allsrc, ['scripts']);
     gulp.watch(config.html.dest).on('change', reload);
 });
 
@@ -218,10 +265,13 @@ gulp.task('watch', ['setWatch'], function() {
 
 gulp.task('default', ['watch'])
 
+
+
+
+
+
 // ===========================================================
-// 
-// 
-// 
+//  其他
 // ==========================================================
 
 
@@ -239,43 +289,8 @@ gulp.task('webserver', function() {
         );
 });
 
-//压缩JS
-gulp.task('minifyjs', function() {
-    gulp.src('lib/*.js')
-        .pipe(uglify())
-        .pipe(gulp.dest('build/temp_js'))
-});
-
-//合并JS  
-gulp.task('alljs', function() {
-    return gulp.src('build/temp_js/*.js')
-        .pipe(concat('xxtppt.min.js'))
-        .pipe(gulp.dest('build'))
-        .pipe(livereload());
-});
-
-//重命名project.md 文件
-gulp.task('rename', function() {
-    return gulp.src("./Project.md")
-        .pipe(rename("README.md"))
-        .pipe(gulp.dest("./build"));
-});
-
 
 //通过浏览器打开本地 Web服务器 路径
 gulp.task('openbrowser', function() {
     opn('http://' + config.localserver.host + ':' + config.localserver.port);
 });
-
-
-//多余文件删除
-gulp.task('clean', function() {
-    return gulp.src(['build/temp_js/*', 'build/temp_css/*'], {
-            read: false
-        })
-        .pipe(clean({
-            force: true
-        }))
-});
-
-
