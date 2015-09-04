@@ -3,15 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <meta content="yes" name="apple-mobile-web-app-capable" />
     <meta content="black" name="apple-mobile-web-app-status-bar-style" />
     <meta name="format-detection" content="telphone=no" />
     <link rel="stylesheet" type="text/css" href="pwBox.css" />
     <script src="pwBox.js"></script>
     <script>
-    window.onload = function() {
 
+    window.onload = function() {
         //键盘节点
         var keyboardContainer = document.querySelector('.cm-keyboard-list')
 
@@ -52,6 +52,7 @@
         })
 
     }
+
     </script>
     <title>数字键盘</title>
 </head>
@@ -86,7 +87,7 @@
                 <li><span>●</span></li>
             </ul>
         </section>
-        <section class="cm-modal cm-modal--num-keyboard" style="display:block;">
+        <section class="cm-modal cm-modal-num-keyboard" style="display:block;">
             <div class="cm-modal-bd">
                 <!--<div class="cm-keyboard-bar"><span class="btn-secondary">完成</span></div>-->
                 <ul class="cm-keyboard-list">

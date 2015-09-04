@@ -30,7 +30,7 @@ function pwBox(keyboardContainer, passWord1, passWord2) {
 		e.stopPropagation();
 		fn(e);
 	}
-	
+
 	keyboardContainer.addEventListener(START_EV, function(e) {
 		touchfix(e,function(event){
 			start(event);	

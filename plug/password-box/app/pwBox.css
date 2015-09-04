@@ -3,6 +3,7 @@
  */
 html, body {
     height: 100%;
+    background: #ccc;
 }
  
 * {
@@ -15,7 +16,7 @@ html, body {
     margin: 0;
     padding: 0;
 }
-
+   
 /**
  * 1. Set default font family to sans-serif.
  * 2. Prevent iOS text size adjust after orientation change, without disabling
@@ -95,10 +96,6 @@ ul, ol {
     border-right-width: 0;
     border-bottom-width: 0;
     transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
-    -moz-transform: rotate(-45deg);
-    -o-transform: rotate(-45deg);
-    -ms-transform: rotate(-45deg);
     position: absolute;
     top: 7px;
     left: 7px;
@@ -128,7 +125,7 @@ ul, ol {
     z-index: 985;
 }
 
-.cm-modal--num-keyboard {
+.cm-modal-num-keyboard {
     bottom: 0;
     width: 100%;
     left: 0;
@@ -159,7 +156,7 @@ ul, ol {
     box-sizing: border-box;
 }
 
-.cm-modal--num-keyboard .cm-keyboard-bar {
+.cm-modal-num-keyboard .cm-keyboard-bar {
     background-color: #e2e2e2;
     text-align: right;
     padding-right: 10px;
@@ -168,7 +165,7 @@ ul, ol {
     border-top: 1px solid #dbdbdb;
 }
 
-.cm-modal--num-keyboard .cm-keyboard-bar .btn-secondary {
+.cm-modal-num-keyboard .cm-keyboard-bar .btn-secondary {
     line-height: 30px;
     height: 30px;
     padding: 0 15px;
