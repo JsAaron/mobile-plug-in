@@ -1,10 +1,27 @@
 //sass style
 //-----------------------------------
-$fontStack:    Helvetica, sans-serif;
+$fontStack: Helvetica,
+sans-serif;
 $primaryColor: red;
+$side:left;
+.class1 {
+    border: 1px solid #ddd;
+}
 
 body {
-background:#ccc;
-  font-family: $fontStack;
-  color: $primaryColor;
+    background: #ccc;
+    font-family: $fontStack;
+    color: $primaryColor;
+    @extend .class1;
+}
+
+@mixin box-sizing($sizeing) {
+    -webkit-box-sizing: $sizeing;
+    -moz-box-sizing: $sizeing;
+    box-sizing: $sizeing;
+}
+
+.box-border{
+    border:1px solid #ccc;
+    @include box-sizing(border-box);
 }

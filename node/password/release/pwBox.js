@@ -46,9 +46,16 @@
 
 	var Vue = __webpack_require__(1);
 
-	document.write(111)
+	window.onload = function(){
+		var demo = new Vue({
+		  el: '#demo',
+		  clickHandler :function(){
+		  	alert(1)
+		  }
+		})	
+	}
 
-	alert(123)
+
 
 /***/ },
 /* 1 */

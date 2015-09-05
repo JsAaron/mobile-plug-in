@@ -82,6 +82,7 @@ gulp.task("webpack", function(callback) {
 });
 
 gulp.task("gulpWebpack", function(callback) {
+     var bulid = config.script.name.replace("js", 'build.js')
     return gulp.src(config.script.src)
         .pipe(gulpWebpack({
             entry: {
@@ -89,7 +90,7 @@ gulp.task("gulpWebpack", function(callback) {
             },
             output: {
                 filename: config.script.name,
-            },
+            }
         }))
         .on('error', handleErrors)
         .pipe(gulp.dest(config.script.dest))
