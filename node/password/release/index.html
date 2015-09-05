@@ -15,10 +15,11 @@
 
 <body>
 
-<div id="demo">
-    <div v-on="click:clickHandler">11</div>
-</div>
-
+    <ul id="demo">
+    <li v-repeat="items" class="item-{{$index}}">
+       {{$index}} {{text}} {{a}}
+    </li>
+    </ul>
 
     <div class="cm-opacity"></div>
     <div class="cm-password-content">
