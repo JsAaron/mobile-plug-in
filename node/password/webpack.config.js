@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = function(config) {
     var bulid = config.script.name.replace("js", 'build.js')
     return {
-        //页面入口文件配置
+        //页面入口
         entry: {
             app:[config.script.src] 
                 // vendor: ["jquery"]
